@@ -82,7 +82,7 @@ function App() {
   }, [tires, minTireData, maxTireData]);
 
   const changeTires = (tires: tire[]) => [...tires.slice(1, tires.length), tires[0]];
-
+console.warn(tires);
   return (
     <main style={{width: "850px", margin: "auto"}}>
       <h2 style={{fontWeight: "500", fontSize: "30px"}}>Tire Size and Height Comparison Calculator</h2>
