@@ -6,3 +6,11 @@ export type tire = {
     height?: number
   }
   
+export interface HeightLimits {
+    min: number;
+    max: number;
+}
+
+export interface TireDataForm extends tire {
+    heightLimit: number;
+}

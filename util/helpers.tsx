@@ -1,4 +1,4 @@
-import {tire} from "../types/tire";
+import {tire, TireDataForm, HeightLimits} from "../types/tire";
 
 type SidewallHeightUnit = "inch" | "mm";
 
@@ -72,4 +72,47 @@ export function range(start: number, stop: number, step = 1) {
   return [...Array(length).keys()]
     .filter(i => i % Math.round(step) === 0)
     .map(v => start + v * direction);
+}
+
+export function listTiresPerWheelDiameter(
+  min: TireDataForm,
+  max: TireDataForm,
+  wheelDiameter: number,
+  heightLimits: HeightLimits = {min: min.heightLimit, max: max.heightLimit}
+): tire[] {
+  const items: tire[] = [];
+
+  for (let width = min.width; width <= max.width; width += 5) {
+      if (width % 10 === 0) {
+          continue;
+      }
+
+      for (
+          let aspectRatio = min.aspectRatio;
+          aspectRatio <= max.aspectRatio;
+          aspectRatio += 5
+      ) {
+          const height = calculateTireHeight({
+              width,
+              aspectRatio,
+              wheelDiameter,
+          });
+
+          if (
+              height > heightLimits.min &&
+              height < heightLimits.max
+          ) {
+              items.push({
+                  width,
+                  aspectRatio,
+                  wheelDiameter,
+                  height
+              });
+          }
+      }
+  }
+
+  items.sort((a, b) => (a.height && b.height && a.height < b.height ? -1 : 1));
+
+  return items;
 }

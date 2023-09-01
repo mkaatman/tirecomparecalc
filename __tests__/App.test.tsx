@@ -45,21 +45,26 @@ describe('range', () => {
   });
 });
 
-it('calculates sidewall height', () => {
-  expect(calculateSideWallHeight(30, 255)).toBeCloseTo(3.01);
-  expect(calculateSideWallHeight(30, 255, "mm")).toBeCloseTo(76.5);
+describe('calculateSideWallHeight', () => {
+  it('calculates sidewall height', () => {
+    expect(calculateSideWallHeight(30, 255)).toBeCloseTo(3.01);
+    expect(calculateSideWallHeight(30, 255, "mm")).toBeCloseTo(76.5);
+  });
 });
 
-it('calculates tire height', () => {
-  expect(calculateTireHeight({width: 245, aspectRatio: 30, wheelDiameter: 16})).toBeCloseTo(21.79);
+describe('calculateTireHeight', () => {
+  it('calculates tire height', () => {
+    expect(calculateTireHeight({width: 245, aspectRatio: 30, wheelDiameter: 16})).toBeCloseTo(21.79);
+  });
 });
 
-it('calculates circumference', () => {
-  const result = calculateCircumference({diameter: 64.26, diameterUnit: "cm"}, "cm");
-  expect(result.value).toBeCloseTo(201.89, 1);
-  expect(result.unit).toEqual("cm");
+describe('calculateSidcalculateCircumferenceeWallHeight', () => {
+  it('calculates circumference', () => {
+    const result = calculateCircumference({diameter: 64.26, diameterUnit: "cm"}, "cm");
+    expect(result.value).toBeCloseTo(201.89, 1);
+    expect(result.unit).toEqual("cm");
+  });
 });
-
 
 describe('calculateRevs', () => {
   const INCH_PER_MILE = 63360;
