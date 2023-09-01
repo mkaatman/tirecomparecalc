@@ -18,7 +18,7 @@ export default function TireHeightColumn({items, onSelect, tires}: tireHeightCol
         background = "";
         if(JSON.stringify(tires[0]) === JSON.stringify(tire)) background = "tire1";
         if(JSON.stringify(tires[1]) === JSON.stringify(tire)) background = "tire2";
-        return <div className={background} key={index + JSON.stringify(tire)}>
+        return <div className={background} style={{cursor: "pointer"}} key={index + JSON.stringify(tire)}>
             {DisplayTire(tire, () => {
                 tires.shift();
                 tires.push(tire);
