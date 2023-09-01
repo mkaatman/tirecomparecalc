@@ -1,19 +1,8 @@
-import {useState, useCallback, useEffect, ChangeEventHandler} from 'react';
+import {useState, useCallback, ChangeEventHandler, useMemo} from 'react';
+import {calculateTireHeight, calculateCircumference, calculateRevs, calculateSideWallHeight, range} from '../util/helpers';
+import {tire} from "../types/tire";
 import { Panel } from './ui/Panel';
 import { Card } from './ui/Card';
-
-type tire = {
-  width: number, // Tread width stored in mm
-  aspectRatio: number, // The height of the tire sidewall compared with the tire width. It is represented as a percentage of the tire width.
-  wheelDiameter: number, // Wheel diameter stored in inches
-  height?: number
-}
-
-// type wheel = {
-//   width: number, // Inches
-//   diameter: number, // Inches
-//   offset?: number // Inches
-// }
 
 interface HeightLimits {
   min: number;
@@ -55,7 +44,7 @@ function App() {
   // console.log("App", tires, minTireData);
 
   // Run once to grab parameters from hash
-  useEffect(() => {
+  useMemo(() => {
     function tireFormFromHash(hash = '') {
       if(!hash) return;
       const tire = hash.split("/");
@@ -85,11 +74,11 @@ function App() {
     
     tireData1 && setMinTireData(tireData1);
     tireData2 && setMaxTireData(tireData2);
-    selectedTireData1 && selectedTireData2 && setTires([selectedTireData1 || minTireData, selectedTireData2 || maxTireData]);
+    selectedTireData1 && selectedTireData2 && setTires([selectedTireData1, selectedTireData2]);
   }, []);
 
   // Update hash when tires or form data change
-  useEffect(() => {
+  useMemo(() => {
     const params = new URLSearchParams(window.location.hash.substring(1));
     if(tires[0]) params.set("selectedTire1", tires[0].width + "/" + tires[0].aspectRatio + "/" + tires[0].wheelDiameter);
     if(tires[1]) params.set("selectedTire2", tires[1].width + "/" + tires[1].aspectRatio + "/" + tires[1].wheelDiameter);
@@ -318,80 +307,6 @@ function listTiresPerWheelDiameter(
   items.sort((a, b) => (a.height && b.height && a.height < b.height ? -1 : 1));
 
   return items;
-}
-
-type SidewallHeightUnit = "inch" | "mm";
-
-export function calculateSideWallHeight(aspectRatio: number, width: number, unit: SidewallHeightUnit = "inch"): number {
-  const INCH_PER_MM: number = 0.03937008;
-  const PRECISION: number = 2;
-  
-  const sideWallHeight: number = aspectRatio / 100 * width;
-  const convertedHeight: number = unit === "inch" ? sideWallHeight * INCH_PER_MM : sideWallHeight;
-  return Number(Number(convertedHeight).toFixed(PRECISION));
-}
-
-export function calculateTireHeight({ width, aspectRatio, wheelDiameter }: tire): number {
-  const MM_PER_INCH: number = 25.4;
-  return +((width * aspectRatio / 100 * 2 / MM_PER_INCH) + wheelDiameter).toFixed(2);
-}
-
-type RevsUnit = "inch" | "cm";
-
-export function calculateRevs({ unit, value }: { value: number; unit: RevsUnit }) {
-  const CONVERSION_FACTORS: Record<"inch" | "cm", { unit: "mile" | "km"; factor: number }> = {
-      inch: { unit: "mile", factor: 63360 },
-      cm: { unit: "km", factor: 100000 },
-  };
-
-  const conversion = CONVERSION_FACTORS[unit];
-  if (!conversion) {
-      throw new Error("Invalid unit");
-  }
-
-  const revs = conversion.factor / value;
-
-  return {
-      value: +revs.toFixed(2),
-      unit: conversion.unit,
-  };
-}
-
-interface circumference {
-  unit: "cm" | "inch";
-  value: number;
-}
-
-export function calculateCircumference({ diameter, diameterUnit }: { diameter: number; diameterUnit: "cm" | "inch" }, circumferenceUnit: "cm" | "inch" = "inch"): circumference {
-  const CM_PER_INCH: number = 2.54;
-  const INCH_PER_CM: number = 0.3937008;
-  const π: number = Math.PI;
-
-  const convertedDiameter: number =
-      diameterUnit === circumferenceUnit
-          ? diameter
-          : diameterUnit === "inch"
-          ? diameter * CM_PER_INCH
-          : diameter * INCH_PER_CM;
-
-  const circumference: number = convertedDiameter * π;
-
-  return {
-      value: +circumference.toFixed(2),
-      unit: circumferenceUnit,
-  };
-}
-
-// Generates a range of numbers with a step
-export function range(start: number, stop: number, step = 1) {
-  if (step < 1) return [];
-
-  const length = Math.abs(stop - start);
-  const direction = start < stop ? 1 : -1;
-
-  return [...Array(length).keys()]
-    .filter(i => i % Math.round(step) === 0)
-    .map(v => start + v * direction);
 }
 
 export default App;
