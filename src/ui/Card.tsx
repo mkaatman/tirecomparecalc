@@ -1,7 +1,13 @@
-import {ReactNode, CSSProperties, ReactElement} from "react";
+import {ReactNode, CSSProperties, PropsWithChildren} from "react";
+
+type Props = PropsWithChildren<{
+  styles?: CSSProperties;
+  header?: ReactNode;
+}>;
+
 import "./Card.css";
 
-export function Card({ header, children, styles }: {header?: ReactNode, children: ReactElement | ReactElement[], styles?: CSSProperties}) {
+export function Card({ header, children, styles }: Props) {
   return <div className="card" style={{ ...styles }}>
     <div className="cardHeader">{header}</div>
     <div>{children}</div>

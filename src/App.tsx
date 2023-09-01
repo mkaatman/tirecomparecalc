@@ -85,7 +85,7 @@ function App() {
 
   return (
     <main style={{width: "850px", margin: "auto"}}>
-      <h2 style={{fontWeight: "500", fontSize: "30px"}}>Tire Size and Height Calculator</h2>
+      <h2 style={{fontWeight: "500", fontSize: "30px"}}>Tire Size and Height Comparison Calculator</h2>
       <Panel header={<span>Compare tires by size and calculate revolutions per unit of distance.</span>}>
         <div style={{display: "flex", flexDirection: "row", gap: "8px", padding: "0 8px"}}>
           <Panel header={<span>Minimum <TireHeight values={minTireData} /></span>}>

@@ -1,7 +1,13 @@
-import {ReactNode, CSSProperties, ReactElement} from "react";
+import {ReactNode, CSSProperties, PropsWithChildren} from "react";
 import "./Panel.css";
 
-export function Panel({ header, children, footer, styles }: {header?: ReactNode, children: ReactElement | ReactElement[], footer?: ReactNode, styles?: CSSProperties}) {
+type Props = PropsWithChildren<{
+  styles?: CSSProperties;
+  header?: ReactNode;
+  footer?: ReactNode;
+}>;
+
+export function Panel({ header, children, footer, styles }: Props) {
   return <div className="panel" style={{ ...styles }}>
     {header && <div className="panelHeader">{header}</div>}
     <div>{children}</div>
