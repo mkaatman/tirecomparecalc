@@ -4,8 +4,6 @@ import Card from "../ui/Card";
 
 // Compares speedometer for two tires per every 10 mph
 export default function SpeedometerComparisonTable({tires}: {tires: tire[]}) {
-
-    console.warn("+++", tires);
     return <Card header="Speedometer comparison (mph or km/h)">
         <table style={{width: "100%", borderCollapse: "collapse"}}>
             <tbody>
