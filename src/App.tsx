@@ -74,10 +74,10 @@ function App() {
   // Update hash when tires or form data change
   useMemo(() => {
     const params = new URLSearchParams(window.location.hash.substring(1));
-    if(tires[0]) params.set("selectedTire1", tires[0].width + "/" + tires[0].aspectRatio + "/" + tires[0].wheelDiameter);
-    if(tires[1]) params.set("selectedTire2", tires[1].width + "/" + tires[1].aspectRatio + "/" + tires[1].wheelDiameter);
-    params.set("tire1", minTireData.width + "/" + minTireData.aspectRatio + "/" + minTireData.wheelDiameter + "/" + minTireData.heightLimit);
-    params.set("tire2", maxTireData.width + "/" + maxTireData.aspectRatio + "/" + maxTireData.wheelDiameter + "/" + maxTireData.heightLimit);
+    if(tires[0]) params.set("selectedTire1", `${tires[0].width}/${tires[0].aspectRatio}/${tires[0].wheelDiameter}`);
+    if(tires[1]) params.set("selectedTire2", `${tires[1].width}/${tires[1].aspectRatio}/${tires[1].wheelDiameter}`);
+    params.set("tire1", `${minTireData.width}/${minTireData.aspectRatio}/${minTireData.wheelDiameter}/${minTireData.heightLimit}`);
+    params.set("tire2", `${maxTireData.width}/${maxTireData.aspectRatio}/${maxTireData.wheelDiameter}/${maxTireData.heightLimit}`);
     window.location.hash = params.toString();
   }, [tires, minTireData, maxTireData]);
 
