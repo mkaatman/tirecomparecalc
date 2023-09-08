@@ -1,7 +1,6 @@
 import {
   Tire,
   TireDataForm,
-  HeightLimits,
   RevsUnit,
   SidewallHeightUnit,
 } from '../types/tire';
