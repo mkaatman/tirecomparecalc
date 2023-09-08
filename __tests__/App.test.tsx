@@ -1,11 +1,18 @@
-import '@testing-library/jest-dom'
-import { render } from "@testing-library/react"
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
 import App from '../src/App';
-import {calculateTireHeight, calculateCircumference, calculateRevs, calculateSideWallHeight, range} from '../util/helpers';
+import {
+  calculateTireHeight,
+  calculateCircumference,
+  calculateRevs,
+  calculateSideWallHeight,
+  range,
+} from '../util/helpers';
+import { RevsUnit } from '../types/tire';
 
-test("Renders the main page", () => {
-  render(<App />)
-  expect(true).toBeTruthy()
+test('Renders the main page', () => {
+  render(<App />);
+  expect(true).toBeTruthy();
 });
 
 describe('range', () => {
@@ -48,64 +55,74 @@ describe('range', () => {
 describe('calculateSideWallHeight', () => {
   it('calculates sidewall height', () => {
     expect(calculateSideWallHeight(30, 255)).toBeCloseTo(3.01);
-    expect(calculateSideWallHeight(30, 255, "mm")).toBeCloseTo(76.5);
+    expect(calculateSideWallHeight(30, 255, 'mm')).toBeCloseTo(76.5);
   });
 });
 
 describe('calculateTireHeight', () => {
   it('calculates tire height', () => {
-    expect(calculateTireHeight({width: 245, aspectRatio: 30, wheelDiameter: 16})).toBeCloseTo(21.79);
+    expect(
+      calculateTireHeight({ width: 245, aspectRatio: 30, wheelDiameter: 16 })
+    ).toBeCloseTo(21.79);
   });
 });
 
 describe('calculateSidcalculateCircumferenceeWallHeight', () => {
   it('calculates circumference', () => {
-    const result = calculateCircumference({diameter: 64.26, diameterUnit: "cm"}, "cm");
+    const result = calculateCircumference(
+      { diameter: 64.26, diameterUnit: 'cm' },
+      'cm'
+    );
     expect(result.value).toBeCloseTo(201.89, 1);
-    expect(result.unit).toEqual("cm");
+    expect(result.unit).toEqual('cm');
   });
 });
 
 describe('calculateRevs', () => {
   const INCH_PER_MILE = 63360;
   const CM_PER_KM = 100000;
-  
+
   afterEach(() => {
     // Restore any mocked or changed values to their original state after each test
   });
 
-  type RevsUnit = "inch" | "cm";
+  type Circumference = {
+    value: number;
+    unit: RevsUnit;
+  };
 
   it('calculates revs per mile with inch circumference', () => {
-    const circumference = { value: 500, unit: "inch" as RevsUnit};
+    const circumference: Circumference = { value: 500, unit: 'inch' };
     const result = calculateRevs(circumference);
     expect(result.value).toBeCloseTo(INCH_PER_MILE / circumference.value, 2);
     expect(result.unit).toBe('mile');
   });
 
   it('calculates revs per km with cm circumference', () => {
-    const circumference = { value: 100000, unit: 'cm' as RevsUnit };
+    const circumference: Circumference = { value: 100000, unit: 'cm' };
     const result = calculateRevs(circumference);
     expect(result.value).toBe(CM_PER_KM / circumference.value);
     expect(result.unit).toBe('km');
   });
 
   it('calculates revs with custom values', () => {
-    const circumference = { value: 25000, unit: 'inch' as RevsUnit };
+    const circumference: Circumference = { value: 25000, unit: 'inch' };
     const result = calculateRevs(circumference);
     expect(result.value).toBeCloseTo(INCH_PER_MILE / circumference.value, 2);
     expect(result.unit).toBe('mile');
   });
 
   it('throws an error for invalid unit', () => {
-    const input = { value: 100, unit: 'invalid' as RevsUnit };
+    const input: Circumference = { value: 100, unit: 'invalid' as RevsUnit };
     expect(() => {
       calculateRevs(input);
     }).toThrow('Invalid unit');
   });
 
   it('calculates tire revs', () => {
-    expect(calculateRevs({"unit": "cm", "value": 201.88})).toEqual({value: 495.34, unit: "km"});
+    expect(calculateRevs({ unit: 'cm', value: 201.88 })).toEqual({
+      value: 495.34,
+      unit: 'km',
+    });
   });
 });
-
