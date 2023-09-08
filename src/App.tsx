@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Tire, TireDataForm } from '../types/tire';
 import TireForm from './components/TireForm';
 import TireHeight from './components/TireHeight';
@@ -37,7 +37,7 @@ function App() {
   // console.log("App", tires, minTireData);
 
   // Run once to grab parameters from hash
-  useMemo(() => {
+  useEffect(() => {
     function tireFormFromHash(hash = '') {
       if (!hash) return;
       const tire = hash.split('/');
@@ -77,7 +77,7 @@ function App() {
   }, []);
 
   // Update hash when tires or form data change
-  useMemo(() => {
+  useEffect(() => {
     const params = new URLSearchParams(window.location.hash.substring(1));
     if (tires[0])
       params.set(
