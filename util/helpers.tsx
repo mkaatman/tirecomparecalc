@@ -19,17 +19,25 @@ export function calculateSideWallHeight(
   return Number(Number(convertedHeight).toFixed(PRECISION));
 }
 
-export function calculateTireHeight({
-  width,
-  aspectRatio,
-  wheelDiameter,
-}: Omit<Tire, 'height'>): number {
+export function createTireHeightCalculator() {
   const MM_PER_INCH: number = 25.4;
-  return +(
-    (((width * aspectRatio) / 100) * 2) / MM_PER_INCH +
-    wheelDiameter
-  ).toFixed(2);
+  const cache = new Map<string, number>();
+
+  return ({ width, aspectRatio, wheelDiameter }: Omit<Tire, 'height'>): number => {
+    const key = `${width}-${aspectRatio}-${wheelDiameter}`;
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+
+    const tireHeight =
+      (((width * aspectRatio) / 100) * 2) / MM_PER_INCH + wheelDiameter;
+
+    cache.set(key, +tireHeight.toFixed(2));
+    return tireHeight;
+  };
 }
+
+export const calculateTireHeight = createTireHeightCalculator();
 
 export function calculateRevs({
   unit,
