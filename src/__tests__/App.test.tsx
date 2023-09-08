@@ -1,14 +1,14 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import App from '../src/App';
+import App from '../App';
 import {
   calculateTireHeight,
   calculateCircumference,
   calculateRevs,
   calculateSideWallHeight,
   range,
-} from '../util/helpers';
-import { RevsUnit } from '../types/tire';
+} from '../../util/helpers';
+import { RevsUnit } from '../../types/tire';
 
 test('Renders the main page', () => {
   render(<App />);
