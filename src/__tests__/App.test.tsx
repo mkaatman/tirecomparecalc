@@ -1,14 +1,15 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import App from '../src/App';
+import App from '../App';
 import {
   calculateTireHeight,
   calculateCircumference,
   calculateRevs,
   calculateSideWallHeight,
+  listTiresPerWheelDiameter,
   range,
-} from '../util/helpers';
-import { RevsUnit } from '../types/tire';
+} from '../../util/helpers';
+import { RevsUnit } from '../../types/tire';
 
 test('Renders the main page', () => {
   render(<App />);
@@ -125,4 +126,44 @@ describe('calculateRevs', () => {
       unit: 'km',
     });
   });
+});
+
+describe('listTiresPerWheelDiameter', () => {
+  it('should return an empty array if height limits are invalid', () => {
+    const min = { width: 195, aspectRatio: 65, wheelDiameter: 16, heightLimit: 0 };
+    const max = { width: 225, aspectRatio: 70, wheelDiameter: 18, heightLimit: 0 };
+    const wheelDiameter = 17;
+
+    const result = listTiresPerWheelDiameter(min, max, wheelDiameter);
+
+    expect(result).toEqual([]);
+  });
+
+  it('should return an array of tire combinations within the specified limits', () => {
+    const min = { width: 195, aspectRatio: 65, wheelDiameter: 16, heightLimit: 24 };
+    const max = { width: 225, aspectRatio: 70, wheelDiameter: 18, heightLimit: 26 };
+    const wheelDiameter = 16;
+
+    const result = listTiresPerWheelDiameter(min, max, wheelDiameter);
+
+    const expected = [
+      { width: 195, aspectRatio: 65, wheelDiameter: 16, height: 25.98 },
+    ];
+
+    expect(result[0].width).toEqual(expected[0].width);
+    expect(result[0].aspectRatio).toEqual(expected[0].aspectRatio);
+    expect(result[0].wheelDiameter).toEqual(expected[0].wheelDiameter);
+    expect(result[0].height).toBeCloseTo(expected[0].height);
+  });
+
+  it('should return an empty array when height limits are not met', () => {
+    const min = { width: 195, aspectRatio: 65, wheelDiameter: 16, heightLimit: 80 };
+    const max = { width: 225, aspectRatio: 70, wheelDiameter: 18, heightLimit: 90 };
+    const wheelDiameter = 16;
+
+    const result = listTiresPerWheelDiameter(min, max, wheelDiameter);
+
+    expect(result).toEqual([]);
+  });
+
 });

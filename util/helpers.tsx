@@ -1,7 +1,6 @@
 import {
   Tire,
   TireDataForm,
-  HeightLimits,
   RevsUnit,
   SidewallHeightUnit,
 } from '../types/tire';
@@ -20,17 +19,25 @@ export function calculateSideWallHeight(
   return Number(Number(convertedHeight).toFixed(PRECISION));
 }
 
-export function calculateTireHeight({
-  width,
-  aspectRatio,
-  wheelDiameter,
-}: Omit<Tire, 'height'>): number {
+export function createTireHeightCalculator() {
   const MM_PER_INCH: number = 25.4;
-  return +(
-    (((width * aspectRatio) / 100) * 2) / MM_PER_INCH +
-    wheelDiameter
-  ).toFixed(2);
+  const cache = new Map<string, number>();
+
+  return ({ width, aspectRatio, wheelDiameter }: Omit<Tire, 'height'>): number => {
+    const key = `${width}-${aspectRatio}-${wheelDiameter}`;
+    if (cache.has(key)) {
+      return cache.get(key)!;
+    }
+
+    const tireHeight =
+      (((width * aspectRatio) / 100) * 2) / MM_PER_INCH + wheelDiameter;
+
+    cache.set(key, +tireHeight.toFixed(2));
+    return tireHeight;
+  };
 }
+
+export const calculateTireHeight = createTireHeightCalculator();
 
 export function calculateRevs({
   unit,
@@ -104,38 +111,27 @@ export function listTiresPerWheelDiameter(
   min: TireDataForm,
   max: TireDataForm,
   wheelDiameter: number,
-  heightLimits: HeightLimits = { min: min.heightLimit, max: max.heightLimit }
 ): Tire[] {
-  const items: Tire[] = [];
+  const widthRange = Array.from(
+    { length: (max.width - min.width) / 5 + 1 },
+    (_, index) => min.width + index * 5
+  ).filter((width) => width % 10 !== 0);
 
-  for (let width = min.width; width <= max.width; width += 5) {
-    if (width % 10 === 0) {
-      continue;
-    }
+  const aspectRatioRange = Array.from(
+    { length: (max.aspectRatio - min.aspectRatio) / 5 + 1 },
+    (_, index) => min.aspectRatio + index * 5
+  );
 
-    for (
-      let aspectRatio = min.aspectRatio;
-      aspectRatio <= max.aspectRatio;
-      aspectRatio += 5
-    ) {
-      const height = calculateTireHeight({
-        width,
-        aspectRatio,
-        wheelDiameter,
-      });
+  const tireCombinations = widthRange.flatMap((width) =>
+    aspectRatioRange.map((aspectRatio) => ({
+      width,
+      aspectRatio,
+      wheelDiameter,
+      height: calculateTireHeight({ width, aspectRatio, wheelDiameter }),
+    }))
+  );
 
-      if (height > heightLimits.min && height < heightLimits.max) {
-        items.push({
-          width,
-          aspectRatio,
-          wheelDiameter,
-          height,
-        });
-      }
-    }
-  }
-
-  items.sort((a, b) => (a.height && b.height && a.height < b.height ? -1 : 1));
-
-  return items;
+ return tireCombinations
+  .filter((tire) => tire.height > min.heightLimit && tire.height < max.heightLimit)
+  .sort((a, b) => (a.height && b.height && a.height < b.height ? -1 : 1));
 }
